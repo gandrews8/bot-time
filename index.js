@@ -3,8 +3,7 @@
 const Discord = require('discord.js')
 const cheerio = require('cheerio')
 const axios = require('axios')
-const { createAudioResource, joinVoiceChannel,createAudioPlayer } = require('@discordjs/voice');
-
+const { createAudioResource, joinVoiceChannel, createAudioPlayer } = require('@discordjs/voice');
 
 const client = new Discord.Client({
   intents: [ // Discord moment
@@ -45,12 +44,12 @@ client.on('messageCreate', async message => {
   //Message moment
   let channel = message.channel;
   let image = await flashbang();
-  message.channel.send({content:'Throwing a flashbang!', files: [image]})
+  message.channel.send({ content: 'Throwing a flashbang!', files: [image] })
 
   //Voice moment
   let voice = message.member.voice.channel
   if (!voice) return
-  let resource = createAudioResource('./flashbang.mp3',{inlineVolume: true})
+  let resource = createAudioResource('./flashbang.mp3', { inlineVolume: true })
   resource.volume.setVolume(.2);
   const connection = joinVoiceChannel({
     channelId: voice.id,
@@ -62,6 +61,31 @@ client.on('messageCreate', async message => {
   player.play(resource);
   await sleep(2000)
   connection.destroy()
+});
+
+//One piece thing
+client.on('messageCreate', async message => {
+  if (message.author.bot) return;
+  if (message.content.toLowerCase().includes('real')) {
+    let channel = message.channel;
+    message.channel.send('THE ONE PIECE IS REAL!!!')
+
+    let voice = message.member.voice.channel
+    if (!voice) return
+    let resource = createAudioResource('./real.mp3', { inlineVolume: true })
+    resource.volume.setVolume(.2);
+    const connection = joinVoiceChannel({
+      channelId: voice.id,
+      guildId: voice.guild.id,
+      adapterCreator: voice.guild.voiceAdapterCreator,
+    });
+    const player = createAudioPlayer();
+    connection.subscribe(player);
+    player.play(resource);
+    await sleep(20000)
+    connection.destroy()
+  }
+
 });
 
 //Porn time
